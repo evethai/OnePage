@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống QR Product One-Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #14b8a6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --blur: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #f5f3ff, #f8fafc);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(var(--blur));
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--dark);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 99px;
+            gap: 4px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 99px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: #ffffff;
+            color: var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Container */
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        /* Section visibility */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Product Detail View */
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 40px;
+            background: var(--card-bg);
+            backdrop-filter: blur(var(--blur));
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.03), 0 10px 10px -5px rgba(0,0,0,0.02);
+        }
+
+        .product-gallery {
+            border-radius: 18px;
+            overflow: hidden;
+            background: #f1f5f9;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+        }
+
+        .product-gallery img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .sku-badge {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .stock-badge {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .product-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .product-desc {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .specs-table td {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .specs-table td.label {
+            color: var(--text-muted);
+            font-weight: 500;
+            width: 35%;
+        }
+
+        .specs-table td.value {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        /* Token Countdown Banner */
+        .token-banner {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .token-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .timer-circle {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+
+        .token-text h5 {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #1e3a8a;
+        }
+
+        .token-text p {
+            font-size: 0.8rem;
+            color: #1e40af;
+        }
+
+        /* Admin Styles */
+        .admin-dashboard {
+            background: var(--card-bg);
+            backdrop-filter: blur(var(--blur));
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.03);
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .admin-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: var(--light);
+        }
+
+        /* Excel Upload Drag Area */
+        .excel-drop-zone {
+            border: 2px dashed #cbd5e1;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 25px;
+        }
+
+        .excel-drop-zone:hover {
+            border-color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .excel-drop-zone svg {
+            width: 40px;
+            height: 40px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* Table */
+        .data-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table th {
+            background: #f1f5f9;
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            font-size: 0.9rem;
+        }
+
+        .action-icon {
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: color 0.2s ease;
+        }
+
+        .action-icon:hover {
+            color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            background: #ffffff;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 50px;
+        }
+
+        /* Mobile Responsive adjustments */
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 15px;
+            }
+            .nav-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary)"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h.01"/><path d="M12 7h.01"/><path d="M17 7h.01"/><path d="M7 12h.01"/><path d="M12 12h.01"/><path d="M7 17h.01"/><path d="M12 17h.01"/><path d="M17 17h.01"/><path d="M17 12h.01"/></svg>
+                <span>QR-ONEPAGE</span>
+            </div>
+            <div class="nav-tabs">
+                <button class="tab-btn active" onclick="switchTab('product')">Trang Sản Phẩm (Demo)</button>
+                <button class="tab-btn" onclick="switchTab('admin')">Quản Trị (Dashboard)</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- PRODUCT VIEW -->
+        <div id="product-section" class="section active">
+            <!-- Token Banner -->
+            <div class="token-banner">
+                <div class="token-left">
+                    <div class="timer-circle" id="timer">15:00</div>
+                    <div class="token-text">
+                        <h5>Phiên quét mã QR hợp lệ</h5>
+                        <p>Hệ thống tự động bảo mật. Liên kết sẽ hết hạn sau khi đếm ngược kết thúc.</p>
+                    </div>
+                </div>
+                <button class="btn btn-outline" style="padding:6px 12px; font-size:0.8rem;" onclick="resetTimer()">Reset Thử Nghiệm</button>
+            </div>
+
+            <!-- Product Card -->
+            <div class="product-grid">
+                <div class="product-gallery">
+                    <!-- SVG logo placeholder for modern graphic -->
+                    <svg width="150" height="150" viewBox="0 0 100 100" fill="none">
+                        <defs>
+                            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#14b8a6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="40" fill="url(#grad)" />
+                        <path d="M35 50 L45 60 L65 40" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="product-info">
+                    <div>
+                        <div class="product-meta">
+                            <span class="sku-badge">SKU: PROD-99812</span>
+                            <span class="stock-badge">Còn hàng</span>
+                        </div>
+                        <h1 class="product-title">Máy Quét Mã QR Di Động Thế Hệ Mới</h1>
+                        <div class="product-price">2,450,000 VND</div>
+                        <p class="product-desc">
+                            Thiết bị quét mã QR cầm tay, hỗ trợ kết nối Bluetooth 5.0, màn hình hiển thị trực quan và pin dung lượng lớn cho thời gian sử dụng liên tục lên đến 24 giờ. Thích hợp cho các hoạt động kho bãi, quản lý bán lẻ và kiểm tra tem nhãn sản phẩm.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h4 style="font-weight: 700; margin-bottom: 10px;">Thông số kỹ thuật</h4>
+                        <table class="specs-table">
+                            <tr>
+                                <td class="label">Thương hiệu</td>
+                                <td class="value">OptiScan Global</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Kết nối</td>
+                                <td class="value">Bluetooth 5.0 / USB-C</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Dung lượng Pin</td>
+                                <td class="value">2,200 mAh</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Trọng lượng</td>
+                                <td class="value">185 gram</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN VIEW -->
+        <div id="admin-section" class="section">
+            <div class="admin-dashboard">
+                <div class="admin-header">
+                    <div class="admin-title">Quản Lý Sản Phẩm</div>
+                    <div class="btn-group">
+                        <button class="btn btn-outline" onclick="alert('Đang tải file mẫu Excel...')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                            Tải file mẫu Excel
+                        </button>
+                        <button class="btn btn-primary" onclick="alert('Mở form Thêm Sản phẩm...')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Thêm sản phẩm mới
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Excel Drag-Drop -->
+                <div class="excel-drop-zone" onclick="alert('Mở hộp thoại chọn tệp Excel...')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
+                        <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+                        <path d="M8 13h8"/>
+                        <path d="M8 17h8"/>
+                        <path d="M10 9h2"/>
+                    </svg>
+                    <h4 style="margin-bottom: 5px;">Cập nhật / Import hàng loạt qua file Excel</h4>
+                    <p>Nhấp hoặc kéo thả file Excel (.xlsx) chứa sản phẩm của bạn vào đây để cập nhật số lượng lớn.</p>
+                </div>
+
+                <!-- CRUD Table -->
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã SKU</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Đơn Giá</th>
+                                <th>Kho hàng</th>
+                                <th>Mã QR sản phẩm</th>
+                                <th style="text-align: right;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight: 700;">PROD-99812</td>
+                                <td>Máy Quét Mã QR Di Động Thế Thế Mới</td>
+                                <td>2,450,000 VND</td>
+                                <td><span class="stock-badge">120 chiếc</span></td>
+                                <td>
+                                    <button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem;" onclick="alert('Đang tải ảnh QR cho SKU PROD-99812...')">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                                        Tải QR
+                                    </button>
+                                </td>
+                                <td style="text-align: right;">
+                                    <span class="action-icon" style="margin-right: 15px;" onclick="alert('Sửa sản phẩm...')">✏️</span>
+                                    <span class="action-icon" onclick="confirm('Bạn có chắc muốn xóa sản phẩm này?')">🗑️</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 700;">PROD-10255</td>
+                                <td>Tem Nhãn NFC Thông Minh 2026</td>
+                                <td>45,000 VND</td>
+                                <td><span class="stock-badge" style="background:#fee2e2; color:#b91c1c;">Hết hàng</span></td>
+                                <td>
+                                    <button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem;" onclick="alert('Đang tải ảnh QR cho SKU PROD-10255...')">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                                        Tải QR
+                                    </button>
+                                </td>
+                                <td style="text-align: right;">
+                                    <span class="action-icon" style="margin-right: 15px;" onclick="alert('Sửa sản phẩm...')">✏️</span>
+                                    <span class="action-icon" onclick="confirm('Bạn có chắc muốn xóa sản phẩm này?')">🗑️</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Hệ thống phân phối & quản lý thông tin sản phẩm QR-ONEPAGE &copy; 2026. Phát triển bởi Antigravity.
+    </footer>
+
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+
+            if (tabName === 'product') {
+                event.target.classList.add('active');
+                document.getElementById('product-section').classList.add('active');
+            } else {
+                event.target.classList.add('active');
+                document.getElementById('admin-section').classList.add('active');
+            }
+        }
+
+        // 15-Minute Timer Simulation
+        let timeLeft = 15 * 60; // 15 minutes in seconds
+        const timerElement = document.getElementById('timer');
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerElement.textContent = "Hết hạn";
+                timerElement.style.borderColor = "#ef4444";
+                timerElement.style.color = "#ef4444";
+                alert("Phiên quét mã QR đã hết hạn! Vui lòng quét lại mã QR vật lý để tiếp tục truy cập dữ liệu.");
+            } else {
+                timeLeft--;
+            }
+        }
+
+        let timerInterval = setInterval(updateTimer, 1000);
+
+        function resetTimer() {
+            timeLeft = 15 * 60;
+            timerElement.style.borderColor = "var(--primary)";
+            timerElement.style.color = "var(--primary)";
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+            updateTimer();
+        }
+    </script>
+</body>
+</html>

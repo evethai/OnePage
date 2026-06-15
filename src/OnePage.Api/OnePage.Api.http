@@ -1,0 +1,6 @@
+@OnePage.Api_HostAddress = http://localhost:5265
+
+GET {{OnePage.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
