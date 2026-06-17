@@ -40,7 +40,7 @@ namespace OnePage.Infrastructure.Services
                     Name = name,
                     SKU = sku,
                     Description = row.Cell(3).GetValue<string>(),
-                    Price = row.Cell(4).GetValue<double>(),
+                    Price = row.Cell(4).GetValue<decimal>(), // Updated from double to decimal
                     StockQuantity = row.Cell(5).GetValue<int>(),
                     PropertiesJson = row.Cell(6).GetValue<string>() ?? "{}",
                     CreatedAt = DateTime.UtcNow,
